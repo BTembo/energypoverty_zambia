@@ -185,4 +185,83 @@ mepi_loc
 
 
 
+##
+
+input_dimensions <- function(dbInput, dbTable){
+  
+  dataVal1 <- tbl(dbInput, dbTable) %>%
+    dplyr::select(hh_key, province_name, hhweight, report, clean_cooking, clean_lighting,
+                  owns_appliance, entertainment, grid_access, popweight) %>%
+    dplyr::tbl_df()
+  
+}
+
+
+df_dim_inputs <- input_dimensions(ep_data_file, "df_energypoverty")
+head(df_dim_inputs, 3)
+
+
+### Table 9: Share (in %) of households without grid access
+
+gridaccess_df <- df_dim_inputs %>% 
+  select(hh_key, province_name, report, hhweight, grid_access) %>%
+  dplyr::group_by(report, province_name, grid_access) %>%
+  dplyr::summarise(tot_hhweight = sum(hhweight, na.rm = T)) %>%
+  dplyr::mutate(prop_hh = round(100*tot_hhweight/sum(tot_hhweight), 2)) %>% 
+  dplyr::filter(grid_access == 'No')
+
+gridaccess_df
+
+
+### Table 10: Share (in %) of households without clean cooking
+
+cookingfuels_df <- df_dim_inputs %>% 
+  select(hh_key, province_name, report, hhweight, clean_cooking) %>%
+  dplyr::group_by(report, province_name, clean_cooking) %>%
+  dplyr::summarise(tot_hhweight = sum(hhweight, na.rm = T)) %>%
+  dplyr::mutate(prop_hh = round(100*tot_hhweight/sum(tot_hhweight), 2)) %>% 
+  dplyr::filter(clean_cooking == 'No')
+
+cookingfuels_df
+
+
+### Table 11: Share (in %) of households without clean lighting
+
+lightingfuels_df <- df_dim_inputs %>% 
+  select(hh_key, province_name, report, hhweight, clean_lighting) %>%
+  dplyr::group_by(report, province_name, clean_lighting) %>%
+  dplyr::summarise(tot_hhweight = sum(hhweight, na.rm = T)) %>%
+  dplyr::mutate(prop_hh = round(100*tot_hhweight/sum(tot_hhweight), 2)) %>% 
+  dplyr::filter(clean_lighting == 'No')
+
+lightingfuels_df
+
+
+### Table 12: Share (in %) of households without electrical appliance ownership
+
+ownsappliance_df <- df_dim_inputs %>% 
+  select(hh_key, province_name, report, hhweight, owns_appliance) %>%
+  dplyr::group_by(report, province_name, owns_appliance) %>%
+  dplyr::summarise(tot_hhweight = sum(hhweight, na.rm = T)) %>%
+  dplyr::mutate(prop_hh = round(100*tot_hhweight/sum(tot_hhweight), 2)) %>% 
+  dplyr::filter(owns_appliance == 'No')
+
+ownsappliance_df
+
+
+### Table 13: Share (in %) of households without entertainment
+
+entertainment_df <- df_dim_inputs %>% 
+  select(hh_key, province_name, report, hhweight, entertainment) %>%
+  dplyr::group_by(report, province_name, entertainment) %>%
+  dplyr::summarise(tot_hhweight = sum(hhweight, na.rm = T)) %>%
+  dplyr::mutate(prop_hh = round(100*tot_hhweight/sum(tot_hhweight), 2)) %>% 
+  dplyr::filter(entertainment == 'No')
+
+entertainment_df
+
+
+
+
+
 
